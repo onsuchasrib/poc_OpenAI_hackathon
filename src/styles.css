@@ -1953,9 +1953,9 @@ body::after {
   place-items: center;
   font-weight: 900;
   font-size: 1.2rem;
-  background: var(--color-soft-gray);
-  color: rgba(47, 51, 55, 0.68);
-  border: 1px solid var(--line-soft);
+  background: var(--color-deep-lake-strong);
+  color: white;
+  border: 1px solid transparent;
 }
 
 .demo-step--active {
@@ -1982,9 +1982,9 @@ body::after {
   gap: 0.4rem;
   padding: 0.45rem 0.8rem;
   border-radius: 999px;
-  background: rgba(255, 253, 246, 0.9);
-  border: 1px solid rgba(244, 167, 154, 0.4);
-  color: rgba(47, 51, 55, 0.72);
+  background: #FDE68A;
+  border: 1px solid #D97706;
+  color: #1C1917;
   font-weight: 700;
   font-size: 0.92rem;
 }
