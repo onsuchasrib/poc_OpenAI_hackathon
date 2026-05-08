@@ -131,13 +131,15 @@ export function DashboardSummaryPanel({ personaId, liveSignal, compact = false }
 export function Dashboard({ selectedId }: Props) {
   return (
     <section className="stack dashboard" aria-labelledby="dashboard-title">
-      <aside className="demo-note clinical-note" aria-label="Clinical view note">
-        ⓘ <strong>Clinical view</strong> — This data is intended for clinicians and caregivers to review the patient's cognitive performance. It is not shown to the user.
-      </aside>
-      <div className="section-heading">
-        <p className="eyebrow">Page 3 · Dashboard</p>
-        <h2 id="dashboard-title">Clinical review summary</h2>
-        <p>Read-only synthetic longitudinal support signals. No diagnostic claims.</p>
+      <div className="page-banner page-banner--clinical">
+        <div className="page-banner__inner">
+          <span className="page-banner__step">Step 3 of 3</span>
+          <h2 id="dashboard-title" className="page-banner__title">Clinical review summary</h2>
+          <p className="page-banner__sub">Read-only synthetic longitudinal support signals. No diagnostic claims.</p>
+        </div>
+        <aside className="page-banner__note page-banner__note--clinical" aria-label="Clinical view note">
+          ⓘ <strong>Clinical view</strong> — This data is for clinicians and caregivers only. It is not shown to the user.
+        </aside>
       </div>
 
       <DashboardSummaryPanel personaId={selectedId} />

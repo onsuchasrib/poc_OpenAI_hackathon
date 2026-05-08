@@ -8,13 +8,15 @@ type Props = {
 export function PersonaSelector({ selectedId, onSelect }: Props) {
   return (
     <section className="persona-page" aria-labelledby="persona-title">
-      <aside className="demo-note" aria-label="Demo note">
-        ⓘ <strong>Demo only</strong> — This is not the actual user interface. This screen demonstrates the interaction between the user and the AGI companion.
-      </aside>
-
-      <div className="section-heading minimal-heading">
-        <h1 id="persona-title">Second Brain</h1>
-        <p className="demo-intro">This demo walks through three everyday Thai life situations where an AGI companion quietly supports cognitive health</p>
+      <div className="page-banner">
+        <div className="page-banner__inner">
+          <span className="page-banner__step">Step 1 of 3</span>
+          <h1 id="persona-title" className="page-banner__title">Second Brain</h1>
+          <p className="page-banner__sub">Three everyday Thai life situations where an AGI companion quietly supports cognitive health.</p>
+        </div>
+        <aside className="page-banner__note" aria-label="Demo note">
+          i <strong>Demo only</strong> — This screen demonstrates the interaction between the user and the AGI companion, not the real UI.
+        </aside>
       </div>
 
       <ol className="demo-steps" aria-label="Demo steps">
@@ -29,14 +31,15 @@ export function PersonaSelector({ selectedId, onSelect }: Props) {
           <span className="demo-step__num">2</span>
           <div>
             <strong>Live AI conversation</strong>
-            <p>Hear Second Brain guide the person through their situation in real time — and follow along with a suggested response.</p>
+            <p>Hear Second Brain guide the person through their situation in real time and follow along with a suggested response.</p>
+            <p className="demo-step__note">Microphone — Please be in a quiet place and have your microphone accessible before continuing.</p>
           </div>
         </li>
         <li className="demo-step">
           <span className="demo-step__num">3</span>
           <div>
             <strong>Dashboard review</strong>
-            <p>See how the AI's cognitive support signals are captured and surfaced to a family caregiver.</p>
+            <p>See how the AI cognitive support signals are captured and surfaced to a family caregiver.</p>
           </div>
         </li>
       </ol>
@@ -50,8 +53,9 @@ export function PersonaSelector({ selectedId, onSelect }: Props) {
             aria-pressed={persona.id === selectedId}
             aria-label={`${persona.label}: ${persona.name}, ${persona.age}, ${persona.location}. ${persona.description}`}
           >
-            <span className="persona-topline">{persona.label} — {persona.name}, {persona.age}, {persona.location}</span>
-            <p>“{persona.description}”</p>
+            <span className="persona-scenario-tag">{persona.label}</span>
+            <span className="persona-name">{persona.name} — {persona.age} — {persona.location}</span>
+            <p>{persona.description}</p>
           </button>
         ))}
       </div>

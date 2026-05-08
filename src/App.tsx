@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { CompanionDemo } from './components/CompanionDemo';
 import { Dashboard } from './components/Dashboard';
 import { PersonaSelector } from './components/PersonaSelector';
@@ -48,15 +48,18 @@ export default function App() {
     setStage((current) => nextStage(current));
   };
 
-  const completeConversation = () => {
+  const completeConversation = useCallback(() => {
     setConversationComplete(true);
     setReplayMode(false);
-    clearAutoDashboardTimer();
+    if (autoDashboardTimerRef.current !== null) {
+      window.clearTimeout(autoDashboardTimerRef.current);
+      autoDashboardTimerRef.current = null;
+    }
     autoDashboardTimerRef.current = window.setTimeout(() => {
       autoDashboardTimerRef.current = null;
       setStage('dashboard');
     }, 1500);
-  };
+  }, []);
 
   const selectedPersonaId = personaId ?? 'malee';
 

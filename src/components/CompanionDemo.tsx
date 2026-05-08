@@ -163,6 +163,11 @@ export function CompanionDemo({ personaId, replayMode, onConversationEnd }: Prop
         <span>{statusLabel[voiceState]}</span>
       </div>
 
+      <div className="voice-persona-banner" aria-label="Current scenario">
+        <span className="voice-persona-banner__step">Step 2 of 3</span>
+        <span className="voice-persona-banner__name">{persona.name} · {persona.age} · {persona.location}</span>
+      </div>
+
       <div className={`suggested-response ${voiceState === 'USER_SPEAKING' ? 'dimmed' : ''}`} aria-live="polite">
         {showSuggestedResponse ? (
           <>
