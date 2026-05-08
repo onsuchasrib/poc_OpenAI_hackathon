@@ -27,6 +27,12 @@ jobs:
 
       - name: Build
         run: npm run build
+        env:
+          VITE_OPENAI_API_KEY: ${{ secrets.VITE_OPENAI_API_KEY }}
+          VITE_OPENAI_VOICE_ENABLED: ${{ secrets.VITE_OPENAI_VOICE_ENABLED }}
+          VITE_OPENAI_REALTIME_TOKEN_ENDPOINT: ${{ secrets.VITE_OPENAI_REALTIME_TOKEN_ENDPOINT }}
+          VITE_OPENAI_REALTIME_MODEL: ${{ secrets.VITE_OPENAI_REALTIME_MODEL }}
+          VITE_OPENAI_REALTIME_VOICE: ${{ secrets.VITE_OPENAI_REALTIME_VOICE }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
