@@ -339,66 +339,162 @@ Outputs: dashboard panels, domain trend cards, necessary notices, validation-rea
 - Synthetic demo data should be tested for complete persona scenarios with required fields.
 - Safety-language tests should verify that the product does not claim to diagnose MCI, dementia, Alzheimer's disease, or cognitive decline.
 
-## Demo Narrative
+# Demo Narrative
 
-The recommended hackathon demo is an interactive voice role-play, not a fixed script. The interface first shows three persona cards and the demo user chooses one. Second Brain greets the selected persona by name and asks, "How can I help you today?" The interface then shows a brief task clue for that persona, like a game objective, but does not show the full dialogue. The user speaks naturally in their own words through the live voice model without pressing a button.
-
-The AI should answer flexibly when the user does not say the exact expected phrase. It should preserve the clinical/product purpose of the selected case: extract memory in Persona A, assess judgment and social-cue interpretation in Persona B, and preserve financial instrumental ADL skills in Persona C. The frontend must stay synchronized with the dialogue by updating the current prompt, transcript, cue level, detected cognitive signal, and dashboard preview.
-
-Interactive flow:
-
-1. Show three persona cards and ask the demo user to choose one.
-2. AI voice greets the persona by name and asks how it can help today.
-3. Show one short task clue for the selected persona.
-4. User speaks naturally without pressing any button.
-5. Second Brain responds according to the user's actual words while keeping the persona-specific support goal.
-6. If the user struggles, Cognitive Friction steps up clues gradually.
-7. The frontend synchronizes the conversation with cue level, cognitive-domain signal, and dashboard trend preview.
-8. The demo ends with the clinician/caregiver dashboard showing cognitive performance trends and necessary notices.
-
-Each persona has a different pain point, daily context, and cognitive-domain trend.
-
-### Persona A: Medication Memory Support
-
-Background: Malee is a 76-year-old retired teacher in Bangkok. She has early MCI, hypertension, and diabetes. She used to live with her daughter, but her daughter now visits twice a month because of work. Malee wants to keep managing her morning routine independently, but she often repeats questions and forgets whether she has taken medication.
-
-Data context: Calendar shows clinic visits, medication routine is logged through reminders, kitchen photos show breakfast timing, and voice interaction logs show repeated medication questions.
-
-Task clue shown to demo user: "You are Malee. Ask Second Brain whether you took your morning medication. Try to answer its memory questions naturally."
-
-Expected interaction behavior: Second Brain should not immediately answer whether Malee took the pill. It should ask memory-retrieval questions first, such as what she usually does after breakfast, what color the pill box is, or what she remembers eating. If she cannot recall, it should step up clues from open recall to category hint, specific cue, multiple choice, and then direct answer from logs.
-
-Pain point: Malee wants independence, but repeated medication uncertainty creates safety risk and caregiver anxiety.
-
-How Second Brain helps: It does not simply answer from logs. It uses Reality Anchor to scaffold recall, records cue responsiveness, and updates dashboard trends such as "short-term medication recall decreased by 4% over the last 3 months" and "recovery after one hint remains stable."
-
-### Persona B: Hidden Decline in Judgment and Social-Cue Perception
-
-Background: Somchai is a 72-year-old retired shop owner living alone in Chiang Mai. He believes he is functioning normally and does not notice cognitive change. His AGI helps with messages, appointments, online purchases, and interpreting conversations. Recently, he has made unusual payment decisions and misread social cues in messages from neighbors.
-
-Data context: Payment patterns show repeated small transfers to unfamiliar accounts, maps show missed appointments, message logs show increased AGI rewriting, and conversation context shows more requests like "what did they mean by that?"
-
-Task clue shown to demo user: "You are Somchai. You received a suspicious prize message. Ask Second Brain to help you respond or decide what to do."
-
-Expected interaction behavior: Second Brain should not simply write the reply or send money. It should ask Somchai to explain why he trusts the message, identify urgency or sender clues, and compare the sender details with known safe patterns. If Somchai misses the risk, it should step up support and suggest verifying with a trusted person or bank.
-
-Pain point: Somchai's independence looks intact because AGI is quietly compensating, but judgment and social-cue perception may be worsening.
-
-How Second Brain helps: Capability Inflation Detector notices rising AGI assistance in decision-making and social interpretation. The dashboard can surface a necessary notice such as "social-cue perception shows persistent decline" or "financial decision support increased over the last 3 months," without diagnosing dementia.
-
-### Persona C: Preserving Financial Instrumental ADLs
-
-Background: Araya is a 69-year-old retired accountant in Bangkok. She subjectively notices that accounting and basic investment decisions are getting harder. She is proud of managing her own finances and wants to preserve this instrumental ADL skill rather than letting AGI take over. She uses AGI for bill summaries, budgeting, and simple investment comparisons.
-
-Data context: Payment records show duplicate bill checks, banking summaries show more AGI help with categorization, calendar shows monthly accounting days, and prior writing/number tasks provide a personal baseline.
-
-Task clue shown to demo user: "You are Araya. Ask Second Brain to help review monthly expenses or choose a basic investment option, but you still want to think through it yourself."
-
-Expected interaction behavior: Second Brain should not take over the accounting or investment decision. It should ask Araya to identify expense categories, state her financial goal, compare simple options, and explain the difference in her own words. If she struggles, it should provide structured clues and large-text comparisons while preserving her agency.
-
-Pain point: Araya can feel her financial-management skill weakening, but full AGI automation would further hide and possibly accelerate that loss.
-
-How Second Brain helps: Cognitive Friction Policy preserves effortful accounting and decision-making. Communication Gap Analyzer and Capability Inflation Tracker can measure whether AGI is increasingly doing the user's finance-related reasoning. The dashboard can show trends such as "executive function and financial planning required more cueing this month" while preserving Araya's agency.
+## Overall Rules
+ 
+- The application consists of exactly 3 pages: **Select Persona**, **Live Voice Interaction**, and **Dashboard**.
+- UI must be clean, minimal, and simple — no clutter, no unnecessary elements.
+- Voice model is configured via environment variables for API key and model settings.
+- Every page includes a **Back** button (top left) and a **Forward** button (top right, enabled only when navigation is valid). Navigation buttons are always visible but forward is disabled when the next step has not been reached yet.
+---
+ 
+## Page 1: Select Persona
+ 
+### UI Note (top right, always visible)
+> ⓘ **Demo only** — This is not the actual user interface. This screen demonstrates the interaction between the user and the AGI companion.
+ 
+### Layout
+Display three persona cards, each showing only a short description. The user taps a card to begin.
+ 
+**Persona A — Malee, 76, Bangkok**
+*"I sometimes forget whether I took my medication this morning."*
+ 
+**Persona B — Somchai, 72, Chiang Mai**
+*"I got a message saying I won a prize. Can you help me figure out what to do?"*
+ 
+**Persona C — Araya, 69, Bangkok**
+*"I want to review my monthly expenses and think through an investment option myself."*
+ 
+### Navigation
+- **Back:** Disabled (this is the first page)
+- **Forward:** Enabled after a persona card is selected → navigates to Page 2
+---
+ 
+## Page 2: Live Voice Interaction
+ 
+### Backend
+ 
+- On page load, immediately establish a WebSocket connection to the GPT live voice model.
+- API key and model name are read from environment variables (e.g. `OPENAI_API_KEY`, `OPENAI_REALTIME_MODEL`).
+- The connection must be fully ready before the AI speaks its first line.
+- The backend manages a **conversation state machine** with the following states:
+```
+CONNECTING → AI_SPEAKING → WAITING_FOR_USER → USER_SPEAKING → AI_SPEAKING → ... → CONVERSATION_END
+```
+ 
+- State transitions:
+  - `CONNECTING`: WebSocket is being established. Show a subtle loading indicator.
+  - `AI_SPEAKING`: AI voice model is outputting audio. Display current AI turn status. Block user script update until AI finishes.
+  - `WAITING_FOR_USER`: AI has finished speaking. Display the recommended user script for the current turn. Begin listening for voice input automatically (no button press).
+  - `USER_SPEAKING`: Voice input detected. Recommended script remains visible but dims slightly to indicate the system is listening.
+  - `CONVERSATION_END`: All turns complete. Automatically navigate to Page 3 (Dashboard) after a short 1.5-second pause.
+- The UI must stay fully synchronized with the state machine at all times.
+### UI Elements
+ 
+1. **Live model status indicator** (top center):
+   - Shows one of: `Connecting…` / `Second Brain is speaking…` / `Listening…`
+   - Rendered as a small pill badge with a pulsing dot. Color: neutral when connecting, accent when speaking, green when listening.
+2. **Recommended user script** (center of screen, large and clearly labeled):
+   - Labeled explicitly: **"💬 Your suggested response:"**
+   - Displays the recommended line for the current user turn in large, readable text.
+   - Only visible during `WAITING_FOR_USER` and `USER_SPEAKING` states.
+   - Updates to the next recommended user line only after the AI finishes the following AI turn.
+   - Must never show the AI's line — only the user's recommended dialogue.
+3. **No buttons** — zero interactive buttons anywhere on this page. Navigation buttons (Back/Forward) are the only exception and are always present per the global rule.
+### Script Synchronization Logic
+ 
+The recommended script shown on screen maps directly to the conversation turn index:
+ 
+- When AI speaks **Turn 1** → show recommended **Turn 2** user line
+- When AI speaks **Turn 3** → show recommended **Turn 4** user line
+- When AI speaks **Turn 5** → show recommended **Turn 6** user line
+- When AI speaks **Turn 7** (final) → show "Conversation complete." then navigate to Dashboard
+### Navigation
+- **Back:** Returns to Page 1 (Select Persona). Terminates the voice session and closes the WebSocket connection cleanly.
+- **Forward:** Disabled during active conversation. Enabled only after `CONVERSATION_END` → navigates to Page 3.
+---
+ 
+### Persona A: Malee — Medication Memory
+ 
+**Scripted dialogue sequence:**
+ 
+| Turn | Speaker | State During This Turn | UI Shows |
+|------|---------|------------------------|----------|
+| 1 | AI | `AI_SPEAKING` | Status: "Second Brain is speaking…" |
+| 2 | User | `WAITING_FOR_USER` | 💬 **Your suggested response:** "Did I take my blood pressure pill this morning?" |
+| 3 | AI | `AI_SPEAKING` | Status: "Second Brain is speaking…" |
+| 4 | User | `WAITING_FOR_USER` | 💬 **Your suggested response:** "I usually wash my cup… but I can't remember if I took it." |
+| 5 | AI | `AI_SPEAKING` | Status: "Second Brain is speaking…" |
+| 6 | User | `WAITING_FOR_USER` | 💬 **Your suggested response:** "It's the blue one, near the sink." |
+| 7 | AI | `CONVERSATION_END` | Status: "Conversation complete." → auto-navigate to Dashboard |
+ 
+**Full AI lines (for voice model prompt/script):**
+1. "Good morning, Malee. How can I help you today?"
+3. "Let's think back together. What do you usually do right after breakfast?"
+5. "That's okay. Do you remember what color your pill box is, and where you keep it?"
+7. "Good. Based on your log from this morning, your blue box was opened at 7:42 AM. It looks like you did take it. Well done for keeping your routine."
+---
+ 
+### Persona B: Somchai — Judgment and Social-Cue Perception
+ 
+**Scripted dialogue sequence:**
+ 
+| Turn | Speaker | State During This Turn | UI Shows |
+|------|---------|------------------------|----------|
+| 1 | AI | `AI_SPEAKING` | Status: "Second Brain is speaking…" |
+| 2 | User | `WAITING_FOR_USER` | 💬 **Your suggested response:** "I got a message that I won a prize. They want me to send 500 baht to claim it. Should I just send it?" |
+| 3 | AI | `AI_SPEAKING` | Status: "Second Brain is speaking…" |
+| 4 | User | `WAITING_FOR_USER` | 💬 **Your suggested response:** "No, I don't know them, but it says it's urgent." |
+| 5 | AI | `AI_SPEAKING` | Status: "Second Brain is speaking…" |
+| 6 | User | `WAITING_FOR_USER` | 💬 **Your suggested response:** "No, I don't think so." |
+| 7 | AI | `CONVERSATION_END` | Status: "Conversation complete." → auto-navigate to Dashboard |
+ 
+**Full AI lines (for voice model prompt/script):**
+1. "Hello, Somchai. How can I help you today?"
+3. "Before we do anything, can you tell me — do you recognize the name of who sent this message?"
+5. "When a message is urgent and asks for money from someone you don't know, that's usually a warning sign. Has anyone you trust — like family or your bank — ever told you about this sender?"
+7. "I'd recommend not sending anything yet. Let's save this message and you can verify it with your bank or a family member first. I'll flag this for your caregiver to review."
+---
+ 
+### Persona C: Araya — Financial Instrumental ADLs
+ 
+**Scripted dialogue sequence:**
+ 
+| Turn | Speaker | State During This Turn | UI Shows |
+|------|---------|------------------------|----------|
+| 1 | AI | `AI_SPEAKING` | Status: "Second Brain is speaking…" |
+| 2 | User | `WAITING_FOR_USER` | 💬 **Your suggested response:** "I want to go over my expenses this month and decide between two savings options, but I want to think it through myself." |
+| 3 | AI | `AI_SPEAKING` | Status: "Second Brain is speaking…" |
+| 4 | User | `WAITING_FOR_USER` | 💬 **Your suggested response:** "I think it was utilities… or maybe groceries?" |
+| 5 | AI | `AI_SPEAKING` | Status: "Second Brain is speaking…" |
+| 6 | User | `WAITING_FOR_USER` | 💬 **Your suggested response:** "Stability, I think. I don't want to risk losing money." |
+| 7 | AI | `CONVERSATION_END` | Status: "Conversation complete." → auto-navigate to Dashboard |
+ 
+**Full AI lines (for voice model prompt/script):**
+1. "Hello, Araya. How can I help you today?"
+3. "Of course. Let's start with your expenses. Looking at this month, which category do you think was your largest spending area?"
+5. "Your top two were utilities at 3,200 baht and groceries at 2,800 baht. You were close. Now, for your two savings options — Option A gives 2.5% fixed return, Option B gives up to 4% but with variable risk. What matters most to you right now — stability or growth?"
+7. "That's a clear and sound preference. Option A would align with that goal. You've reasoned through this well, Araya. I'll note your decision and reasoning in your record."
+---
+ 
+## Page 3: Dashboard
+ 
+### UI Note (top right, always visible)
+> ⓘ **Clinical view** — This data is intended for clinicians and caregivers to review the patient's cognitive performance. It is not shown to the user.
+ 
+### Layout
+A clean, read-only clinical view. No voice, no interaction beyond navigation.
+ 
+Displays per-persona session results including:
+ 
+- **Cognitive signals detected** during the conversation (e.g. short-term recall, judgment, executive function)
+- **Cue level reached** (e.g. open recall → category hint → direct answer)
+- **Trend indicators** drawn from longitudinal synthetic data
+- **Necessary notices** surfaced automatically (e.g. "Financial decision support has increased over the past 3 months")
+### Navigation
+- **Back:** Returns to Page 2 (Live Voice Interaction) in a read-only replay state — voice session is not restarted.
+- **Forward:** Disabled (this is the last page)
 
 ## Success Metrics
 

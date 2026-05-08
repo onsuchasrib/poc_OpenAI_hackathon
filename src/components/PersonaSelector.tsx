@@ -1,42 +1,36 @@
 import { personas, type PersonaId } from '../data/personas';
-import { ArrowIcon, CheckIcon } from './Icons';
 
 type Props = {
-  selectedId: PersonaId;
+  selectedId: PersonaId | null;
   onSelect: (id: PersonaId) => void;
-  onContinue: () => void;
 };
 
-export function PersonaSelector({ selectedId, onSelect, onContinue }: Props) {
+export function PersonaSelector({ selectedId, onSelect }: Props) {
   return (
-    <section className="stack" aria-labelledby="persona-title">
-      <div className="section-heading">
-        <p className="eyebrow">Step 1 · choose a role-play persona</p>
-        <h2 id="persona-title">Start with Malee for the polished medication memory loop.</h2>
-        <p>Somchai and Araya stay available as dashboard variants so judges can see broader support signals.</p>
+    <section className="persona-page" aria-labelledby="persona-title">
+      <aside className="demo-note" aria-label="Demo note">
+        ⓘ <strong>Demo only</strong> — This is not the actual user interface. This screen demonstrates the interaction between the user and the AGI companion.
+      </aside>
+
+      <div className="section-heading minimal-heading">
+        <p className="eyebrow">Page 1 · Select Persona</p>
+        <h1 id="persona-title">Select persona</h1>
       </div>
-      <div className="persona-grid">
+
+      <div className="persona-grid narrative-personas">
         {personas.map((persona) => (
           <button
             className={`persona-card panel ${persona.id === selectedId ? 'selected' : ''}`}
             key={persona.id}
             onClick={() => onSelect(persona.id)}
             aria-pressed={persona.id === selectedId}
+            aria-label={`${persona.label}: ${persona.name}, ${persona.age}, ${persona.location}. ${persona.description}`}
           >
-            <span className="persona-topline">
-              <span>{persona.name}, {persona.age}</span>
-              {persona.id === selectedId && <CheckIcon label="Selected" />}
-            </span>
-            <strong>{persona.dashboardVariant}</strong>
-            <span>{persona.location}</span>
-            <p>{persona.context}</p>
-            <small>{persona.focus}</small>
+            <span className="persona-topline">{persona.label} — {persona.name}, {persona.age}, {persona.location}</span>
+            <p>“{persona.description}”</p>
           </button>
         ))}
       </div>
-      <button className="primary-action align-start" onClick={onContinue}>
-        Continue with selected persona <ArrowIcon />
-      </button>
     </section>
   );
 }

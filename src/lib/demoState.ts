@@ -1,13 +1,10 @@
-export type DemoStage = 'landing' | 'personas' | 'consent' | 'companion' | 'architecture' | 'dashboard';
+export type DemoStage = 'personas' | 'companion' | 'dashboard';
 
-export const demoStages: DemoStage[] = ['landing', 'personas', 'consent', 'companion', 'architecture', 'dashboard'];
+export const demoStages: DemoStage[] = ['personas', 'companion', 'dashboard'];
 
 export const stageLabels: Record<DemoStage, string> = {
-  landing: 'Thesis',
-  personas: 'Persona',
-  consent: 'Data boundary',
-  companion: 'Companion loop',
-  architecture: 'Memory instrument',
+  personas: 'Select Persona',
+  companion: 'Live Demo',
   dashboard: 'Dashboard',
 };
 

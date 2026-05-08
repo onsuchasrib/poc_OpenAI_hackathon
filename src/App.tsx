@@ -1,45 +1,98 @@
-import { useState } from 'react';
-import { ConsentBoundary } from './components/ConsentBoundary';
+import { useEffect, useRef, useState } from 'react';
 import { CompanionDemo } from './components/CompanionDemo';
 import { Dashboard } from './components/Dashboard';
-import { Landing } from './components/Landing';
-import { MemoryArchitecture } from './components/MemoryArchitecture';
 import { PersonaSelector } from './components/PersonaSelector';
-import { ProgressNav } from './components/ProgressNav';
 import type { PersonaId } from './data/personas';
-import { nextStage, previousStage, type DemoStage } from './lib/demoState';
+import { nextStage, previousStage, stageLabels, type DemoStage } from './lib/demoState';
 
 export default function App() {
-  const [stage, setStage] = useState<DemoStage>('landing');
-  const [personaId, setPersonaId] = useState<PersonaId>('malee');
+  const [stage, setStage] = useState<DemoStage>('personas');
+  const [personaId, setPersonaId] = useState<PersonaId | null>(null);
+  const [conversationComplete, setConversationComplete] = useState(false);
+  const [replayMode, setReplayMode] = useState(false);
+  const autoDashboardTimerRef = useRef<number | null>(null);
 
-  const goNext = () => setStage((current) => nextStage(current));
-  const goBack = () => setStage((current) => previousStage(current));
-  const restart = () => {
-    setPersonaId('malee');
-    setStage('landing');
+  const canGoBack = stage !== 'personas';
+  const canGoForward =
+    (stage === 'personas' && personaId !== null) ||
+    (stage === 'companion' && conversationComplete);
+
+  const clearAutoDashboardTimer = () => {
+    if (autoDashboardTimerRef.current === null) return;
+    window.clearTimeout(autoDashboardTimerRef.current);
+    autoDashboardTimerRef.current = null;
   };
 
+  useEffect(() => () => clearAutoDashboardTimer(), []);
+
+  const goBack = () => {
+    if (!canGoBack) return;
+    clearAutoDashboardTimer();
+    if (stage === 'dashboard') {
+      setReplayMode(true);
+      setStage('companion');
+      return;
+    }
+    setConversationComplete(false);
+    setReplayMode(false);
+    setStage(previousStage(stage));
+  };
+
+  const goForward = () => {
+    if (!canGoForward) return;
+    clearAutoDashboardTimer();
+    if (stage === 'personas') {
+      setConversationComplete(false);
+      setReplayMode(false);
+    }
+    setStage((current) => nextStage(current));
+  };
+
+  const completeConversation = () => {
+    setConversationComplete(true);
+    setReplayMode(false);
+    clearAutoDashboardTimer();
+    autoDashboardTimerRef.current = window.setTimeout(() => {
+      autoDashboardTimerRef.current = null;
+      setStage('dashboard');
+    }, 1500);
+  };
+
+  const selectedPersonaId = personaId ?? 'malee';
+
   return (
-    <div className="app-shell">
-      <header className="app-header">
-        <div className="brand" aria-label="Second Brain home">
-          <span className="brand-mark" aria-hidden="true">SB</span>
-          <div>
-            <strong>Second Brain</strong>
-            <span>Cognitive wellness support demo</span>
-          </div>
-        </div>
-        <p className="header-note">Static, synthetic, non-diagnostic MVP</p>
-      </header>
-      <ProgressNav current={stage} onSelect={setStage} />
-      <main id="main" className="main-content">
-        {stage === 'landing' && <Landing onStart={() => setStage('personas')} />}
-        {stage === 'personas' && <PersonaSelector selectedId={personaId} onSelect={setPersonaId} onContinue={goNext} />}
-        {stage === 'consent' && <ConsentBoundary onBack={goBack} onContinue={goNext} />}
-        {stage === 'companion' && <CompanionDemo personaId={personaId} onBack={goBack} onContinue={goNext} />}
-        {stage === 'architecture' && <MemoryArchitecture onBack={goBack} onContinue={goNext} />}
-        {stage === 'dashboard' && <Dashboard selectedId={personaId} onBack={goBack} onRestart={restart} />}
+    <div className="app-shell narrative-shell">
+      <nav className="global-nav" aria-label="Demo page navigation">
+        <button className="nav-button" onClick={goBack} disabled={!canGoBack} aria-label="Back">
+          ← Back
+        </button>
+        <span className="page-indicator" aria-live="polite">{stageLabels[stage]}</span>
+        <button className="nav-button" onClick={goForward} disabled={!canGoForward} aria-label="Forward">
+          Forward →
+        </button>
+      </nav>
+
+      <main id="main" className="main-content narrative-content">
+        {stage === 'personas' && (
+          <PersonaSelector
+            selectedId={personaId}
+            onSelect={(id) => {
+              setPersonaId(id);
+              setConversationComplete(false);
+              setReplayMode(false);
+              setStage('companion');
+            }}
+          />
+        )}
+        {stage === 'companion' && (
+          <CompanionDemo
+            key={`${selectedPersonaId}-${replayMode ? 'replay' : 'live'}`}
+            personaId={selectedPersonaId}
+            replayMode={replayMode}
+            onConversationEnd={completeConversation}
+          />
+        )}
+        {stage === 'dashboard' && <Dashboard selectedId={selectedPersonaId} />}
       </main>
     </div>
   );

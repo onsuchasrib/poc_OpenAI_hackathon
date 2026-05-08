@@ -2,12 +2,11 @@ export type PersonaId = 'malee' | 'somchai' | 'araya';
 
 export type Persona = {
   id: PersonaId;
+  label: string;
   name: string;
   age: number;
   location: string;
-  context: string;
-  taskClue: string;
-  focus: string;
+  description: string;
   dashboardVariant: string;
   supportSignal: string;
 };
@@ -15,36 +14,33 @@ export type Persona = {
 export const personas: Persona[] = [
   {
     id: 'malee',
+    label: 'Persona A',
     name: 'Malee',
     age: 76,
     location: 'Bangkok',
-    context: 'Retired teacher managing morning medicine with occasional support from her daughter.',
-    taskClue: 'Ask Second Brain whether you took your morning medication. Try to recall before the log answers.',
-    focus: 'Short-term and prospective medication recall',
-    dashboardVariant: 'Medication memory support',
-    supportSignal: 'Medication recall needed more cueing over 3 months, while recovery after a hint stayed stable.',
+    description: 'I sometimes forget whether I took my medication this morning.',
+    dashboardVariant: 'Medication memory',
+    supportSignal: 'Short-term medication recall has decreased over 3 months while cue responsiveness remains stable.',
   },
   {
     id: 'somchai',
+    label: 'Persona B',
     name: 'Somchai',
     age: 72,
     location: 'Chiang Mai',
-    context: 'Retired shop owner living alone; AGI often helps interpret messages and payment decisions.',
-    taskClue: 'Review a suspicious prize message without letting AGI decide for you immediately.',
-    focus: 'Social-cue perception and financial judgment',
-    dashboardVariant: 'Hidden judgment support need',
-    supportSignal: 'Social-cue checks and financial decision support increased as human-contact markers fell.',
+    description: 'I got a message saying I won a prize. Can you help me figure out what to do?',
+    dashboardVariant: 'Judgment and social-cue perception',
+    supportSignal: 'Social-cue checks and financial judgment support have increased across recent message-review tasks.',
   },
   {
     id: 'araya',
+    label: 'Persona C',
     name: 'Araya',
     age: 69,
     location: 'Bangkok',
-    context: 'Retired accountant who wants to preserve monthly budgeting and basic investment reasoning.',
-    taskClue: 'Think through monthly expenses before asking AGI to summarize or choose for you.',
-    focus: 'Communication and financial instrumental ADL preservation',
-    dashboardVariant: 'Capability inflation gap',
-    supportSignal: 'Autonomous finance explanations shortened while AGI-assisted summaries stayed polished.',
+    description: 'I want to review my monthly expenses and think through an investment option myself.',
+    dashboardVariant: 'Financial instrumental ADLs',
+    supportSignal: 'Financial decision support has increased over the past 3 months, especially during budgeting tradeoffs.',
   },
 ];
 

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { maleeConversation } from '../data/conversation';
 import { decideFriction } from './frictionPolicy';
 
-const [openRecall,,,, directAnswer] = maleeConversation;
+const [openRecall,, directAnswer] = maleeConversation;
 
 describe('decideFriction', () => {
   it('reduces friction on bad days without direct answer before fallback', () => {

@@ -1,10 +1,25 @@
-import { useMemo, useState } from 'react';
-import { getPersona, personas, type PersonaId } from '../data/personas';
+import { useMemo } from 'react';
+import { getPersona, type PersonaId } from '../data/personas';
 import { buildDashboardSummary, getTrendDirection } from '../lib/trendEngine';
 import { ChartIcon, PulseIcon, ShieldIcon } from './Icons';
-import { ValidationReadiness } from './ValidationReadiness';
+import { getPersonaConversation } from '../data/conversation';
 
-type Props = { selectedId: PersonaId; onRestart: () => void; onBack: () => void };
+export type LiveSignal = {
+  domain: string;
+  assistanceLevel: string;
+  recallGap: string;
+  cueResponsiveness: string;
+  latency: string;
+  intensity?: string;
+};
+
+type Props = { selectedId: PersonaId };
+
+type SummaryPanelProps = {
+  personaId: PersonaId;
+  liveSignal?: LiveSignal;
+  compact?: boolean;
+};
 
 function MiniLine({ points, label }: { points: { month: string; value: number }[]; label: string }) {
   const max = Math.max(...points.map((point) => point.value));
@@ -30,17 +45,19 @@ function MiniLine({ points, label }: { points: { month: string; value: number }[
   );
 }
 
-export function Dashboard({ selectedId, onRestart, onBack }: Props) {
-  const [activePersona, setActivePersona] = useState<PersonaId>(selectedId);
-  const persona = getPersona(activePersona);
-  const summary = useMemo(() => buildDashboardSummary(activePersona), [activePersona]);
+export function DashboardSummaryPanel({ personaId, liveSignal, compact = false }: SummaryPanelProps) {
+  const persona = getPersona(personaId);
+  const summary = useMemo(() => buildDashboardSummary(personaId), [personaId]);
+  const conversation = useMemo(() => getPersonaConversation(personaId), [personaId]);
+  const finalStep = conversation.at(-1);
+  const trends = compact ? summary.trends.slice(0, 3) : summary.trends;
 
   return (
-    <section className="stack dashboard" aria-labelledby="dashboard-title">
+    <div className={`dashboard-summary ${compact ? 'compact-dashboard' : ''}`}>
       <div className="dashboard-hero panel elevated">
         <div>
-          <p className="eyebrow">Step 5 · clinician/caregiver dashboard</p>
-          <h2 id="dashboard-title">{persona.name}: support trend summary</h2>
+          <p className="eyebrow">Clinician/caregiver dashboard</p>
+          <h2>{persona.name}: support trend summary</h2>
           <p>{persona.supportSignal}</p>
         </div>
         <div className="support-badge" aria-label={`Support level ${summary.supportLevel}`}>
@@ -48,22 +65,25 @@ export function Dashboard({ selectedId, onRestart, onBack }: Props) {
         </div>
       </div>
 
-      <div className="variant-tabs" role="tablist" aria-label="Persona dashboard variants">
-        {personas.map((item) => (
-          <button
-            key={item.id}
-            role="tab"
-            aria-selected={activePersona === item.id}
-            className={activePersona === item.id ? 'active' : ''}
-            onClick={() => setActivePersona(item.id)}
-          >
-            {item.name}
-          </button>
-        ))}
-      </div>
+      {liveSignal && (
+        <article className="panel live-signal-card" aria-live="polite">
+          <div className="rail-title"><PulseIcon /> Detected during this spoken turn</div>
+          <p><strong>{liveSignal.domain}</strong> · {liveSignal.assistanceLevel} · {liveSignal.intensity ?? 'adaptive'} friction</p>
+          <p>{liveSignal.recallGap}. {liveSignal.cueResponsiveness}. {liveSignal.latency}.</p>
+        </article>
+      )}
+
+      {finalStep && !compact && (
+        <article className="panel session-outcome-card">
+          <div className="rail-title"><PulseIcon /> Session outcome</div>
+          <p><strong>Cognitive signals detected:</strong> {summary.trends.map((trend) => trend.label).join('; ')}</p>
+          <p><strong>Cue level reached:</strong> {finalStep.cueLevel}</p>
+          <p><strong>Conversation signal:</strong> {finalStep.signal.domain}. {finalStep.signal.recallGap}. {finalStep.signal.cueResponsiveness}.</p>
+        </article>
+      )}
 
       <div className="trend-grid">
-        {summary.trends.map((trend) => (
+        {trends.map((trend) => (
           <article className={`trend-card panel ${trend.status}`} key={trend.id}>
             <div className="trend-heading">
               <ChartIcon />
@@ -85,7 +105,7 @@ export function Dashboard({ selectedId, onRestart, onBack }: Props) {
             <div className="rail-title"><PulseIcon /> Necessary notice</div>
             <h3>{notice.title}</h3>
             <p><strong>Why surfaced:</strong> {notice.why}</p>
-            <p><strong>Uncertainty:</strong> {notice.uncertainty}</p>
+            {!compact && <p><strong>Uncertainty:</strong> {notice.uncertainty}</p>}
             <p><strong>Suggested next review:</strong> {notice.suggestion}</p>
           </article>
         ))}
@@ -94,15 +114,33 @@ export function Dashboard({ selectedId, onRestart, onBack }: Props) {
       <article className="panel masking-callout">
         <h3>Capability Inflation Detector</h3>
         <p>{summary.maskingSummary}</p>
+        <div className="tag-cloud" aria-label="Task domains tracked for autonomous versus AGI-assisted completion">
+          <span>Memory</span>
+          <span>Planning</span>
+          <span>Communication</span>
+          <span>Financial management</span>
+          <span>Daily routine</span>
+        </div>
+        <p>Message-writing and finance examples compare autonomous attempts with AGI-assisted outputs, then frame the gap as a support signal.</p>
         <p>This is a review signal for humans. It does not replace caregiver or clinician judgment.</p>
       </article>
+    </div>
+  );
+}
 
-      <ValidationReadiness />
-
-      <div className="button-row wrap">
-        <button className="secondary-action" onClick={onBack}>Back to memory instrument</button>
-        <button className="primary-action" onClick={onRestart}>Restart full demo</button>
+export function Dashboard({ selectedId }: Props) {
+  return (
+    <section className="stack dashboard" aria-labelledby="dashboard-title">
+      <aside className="demo-note clinical-note" aria-label="Clinical view note">
+        ⓘ <strong>Clinical view</strong> — This data is intended for clinicians and caregivers to review the patient's cognitive performance. It is not shown to the user.
+      </aside>
+      <div className="section-heading">
+        <p className="eyebrow">Page 3 · Dashboard</p>
+        <h2 id="dashboard-title">Clinical review summary</h2>
+        <p>Read-only synthetic longitudinal support signals. No diagnostic claims.</p>
       </div>
+
+      <DashboardSummaryPanel personaId={selectedId} />
     </section>
   );
 }

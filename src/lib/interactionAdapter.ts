@@ -1,10 +1,12 @@
-import { maleeConversation, type ConversationStep } from '../data/conversation';
+import { getPersonaConversation, type ConversationStep } from '../data/conversation';
+import type { PersonaId } from '../data/personas';
 import { decideFriction, type SimulatedContext } from './frictionPolicy';
 
 export type InteractionInput = {
   stepIndex: number;
   utterance?: string;
   context: SimulatedContext;
+  personaId?: PersonaId;
 };
 
 export type InteractionOutput = {
@@ -20,10 +22,11 @@ export interface InteractionAdapter {
 
 export class DeterministicInteractionAdapter implements InteractionAdapter {
   next(input: InteractionInput): InteractionOutput {
-    const boundedIndex = Math.max(0, Math.min(input.stepIndex, maleeConversation.length - 1));
-    const step = maleeConversation[boundedIndex];
+    const conversation = getPersonaConversation(input.personaId ?? 'malee');
+    const boundedIndex = Math.max(0, Math.min(input.stepIndex, conversation.length - 1));
+    const step = conversation[boundedIndex];
     const friction = decideFriction(step, input.context);
-    const isComplete = boundedIndex >= maleeConversation.length - 1;
+    const isComplete = boundedIndex >= conversation.length - 1;
 
     return {
       step,
