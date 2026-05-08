@@ -418,6 +418,20 @@ h1, h2, h3, p, strong, span, button { overflow-wrap: anywhere; }
   position: relative;
   z-index: 1;
 }
+.voice-stability-note {
+  position: fixed;
+  top: 0.9rem;
+  right: 1rem;
+  z-index: 45;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.4rem 0.75rem;
+  border-radius: 999px;
+  backdrop-filter: blur(4px);
+  pointer-events: none;
+}
 .live-status-pill {
   position: fixed;
   top: 0.9rem;
@@ -488,25 +502,19 @@ h1, h2, h3, p, strong, span, button { overflow-wrap: anywhere; }
   margin: 0;
   padding: 0;
   display: flex;
-  gap: 0;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 .demo-step {
   display: flex;
   align-items: flex-start;
   gap: 1.1rem;
-  flex: 1;
   position: relative;
-  padding: 1.25rem 1.5rem 1.25rem 0;
+  padding: 0.75rem 0;
   color: var(--ink-soft);
 }
 .demo-step + .demo-step::before {
-  content: '';
-  position: absolute;
-  left: -0.1rem;
-  top: 1.4rem;
-  width: 1px;
-  height: 2rem;
-  background: var(--color-border);
+  display: none;
 }
 .demo-step__num {
   flex-shrink: 0;
@@ -539,6 +547,4 @@ h1, h2, h3, p, strong, span, button { overflow-wrap: anywhere; }
   .persona-page { align-content: start; }
   .live-status-pill { font-size: 0.78rem; padding-inline: 0.65rem; max-width: 46vw; }
   .voice-page { padding-inline: 0; }
-  .demo-steps { flex-direction: column; gap: 0.5rem; }
-  .demo-step + .demo-step::before { display: none; }
 }

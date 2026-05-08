@@ -154,6 +154,10 @@ export function CompanionDemo({ personaId, replayMode, onConversationEnd }: Prop
         backgroundPosition: 'center',
       }}
     >
+      <div className="voice-stability-note" aria-label="Stability notice">
+        ⚠ AI real voice may not be stable
+      </div>
+
       <div className={`live-status-pill ${voiceState.toLowerCase().replaceAll('_', '-')} `} aria-live="polite">
         <span className="status-dot" aria-hidden="true" />
         <span>{statusLabel[voiceState]}</span>

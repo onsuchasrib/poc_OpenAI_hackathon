@@ -13,8 +13,8 @@ export function PersonaSelector({ selectedId, onSelect }: Props) {
       </aside>
 
       <div className="section-heading minimal-heading">
-        <h1 id="persona-title">Select persona</h1>
-        <p className="demo-intro">This demo walks through three everyday Thai life situations where an AGI companion quietly supports cognitive health — kitchen routines, lottery fraud, and investment decisions.</p>
+        <h1 id="persona-title">Second Brain</h1>
+        <p className="demo-intro">This demo walks through three everyday Thai life situations where an AGI companion quietly supports cognitive health</p>
       </div>
 
       <ol className="demo-steps" aria-label="Demo steps">
