@@ -9,38 +9,42 @@ export type Persona = {
   description: string;
   dashboardVariant: string;
   supportSignal: string;
+  bgImage: string;
 };
 
 export const personas: Persona[] = [
   {
     id: 'malee',
-    label: 'Persona A',
+    label: 'Situation 1',
     name: 'Malee',
     age: 76,
     location: 'Bangkok',
-    description: 'I sometimes forget whether I took my medication this morning.',
-    dashboardVariant: 'Medication memory',
-    supportSignal: 'Short-term medication recall has decreased over 3 months while cue responsiveness remains stable.',
+    description: 'Her routine check-ins have been quietly flagged as early signs of MCI.',
+    dashboardVariant: 'Daily routine check-ins',
+    supportSignal: 'Agent check-in frequency has quietly increased over 3 months, driven by repeated queries about routine tasks she previously managed independently.',
+    bgImage: 'https://images.unsplash.com/photo-1556909172-54557c7e4fb7?w=1600&q=80&fit=crop&crop=center',
   },
   {
     id: 'somchai',
-    label: 'Persona B',
+    label: 'Situation 2',
     name: 'Somchai',
     age: 72,
     location: 'Chiang Mai',
-    description: 'I got a message saying I won a prize. Can you help me figure out what to do?',
+    description: 'He thinks he\'s fine — but his interactions reveal subtle cognitive slips he hasn\'t noticed.',
     dashboardVariant: 'Judgment and social-cue perception',
     supportSignal: 'Social-cue checks and financial judgment support have increased across recent message-review tasks.',
+    bgImage: 'https://images.unsplash.com/photo-1567427017947-545c5f8d16ad?w=1600&q=80&fit=crop&crop=center',
   },
   {
     id: 'araya',
-    label: 'Persona C',
+    label: 'Situation 3',
     name: 'Araya',
     age: 69,
     location: 'Bangkok',
-    description: 'I want to review my monthly expenses and think through an investment option myself.',
+    description: 'She actively monitors her own cognitive health to stay in control.',
     dashboardVariant: 'Financial instrumental ADLs',
-    supportSignal: 'Financial decision support has increased over the past 3 months, especially during budgeting tradeoffs.',
+    supportSignal: 'Financial decision support has increased over the past 3 months, especially during investment tradeoffs.',
+    bgImage: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=1600&q=80&fit=crop&crop=center',
   },
 ];
 

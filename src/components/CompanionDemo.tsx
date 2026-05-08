@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { getPersonaConversation } from '../data/conversation';
 import { deterministicInteractionAdapter } from '../lib/interactionAdapter';
 import { connectConfiguredVoiceSession, type VoiceCallbacks, type VoiceSessionHandle } from '../lib/openaiOptional';
-import type { PersonaId } from '../data/personas';
+import { getPersona, type PersonaId } from '../data/personas';
 
 type Props = {
   personaId: PersonaId;
@@ -26,6 +26,7 @@ const statusLabel: Record<VoiceState, string> = {
 };
 
 export function CompanionDemo({ personaId, replayMode, onConversationEnd }: Props) {
+  const persona = useMemo(() => getPersona(personaId), [personaId]);
   const conversation = useMemo(() => getPersonaConversation(personaId), [personaId]);
   const [voiceState, setVoiceState] = useState<VoiceState>(replayMode ? 'CONVERSATION_END' : 'CONNECTING');
   const [stepIndex, setStepIndex] = useState(replayMode ? conversation.length - 1 : 0);
@@ -144,7 +145,15 @@ export function CompanionDemo({ personaId, replayMode, onConversationEnd }: Prop
   const suggestedResponse = replayMode ? 'Conversation complete.' : output.step.userLine;
 
   return (
-    <section className="voice-page" aria-label="Live voice interaction">
+    <section
+      className="voice-page"
+      aria-label="Live voice interaction"
+      style={{
+        backgroundImage: `url(${persona.bgImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }}
+    >
       <div className={`live-status-pill ${voiceState.toLowerCase().replaceAll('_', '-')} `} aria-live="polite">
         <span className="status-dot" aria-hidden="true" />
         <span>{statusLabel[voiceState]}</span>

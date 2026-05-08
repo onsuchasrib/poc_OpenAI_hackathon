@@ -61,7 +61,7 @@ For the hackathon, the MVP uses synthetic AGI interaction logs and longitudinal 
 
 ## MVP Personas
 
-1. Persona A: Older adult with early MCI and family support. She used to live with her daughter, but the daughter now visits only occasionally. She has frequent memory problems, repeats questions, and struggles with medication routines.
+1. Persona A: Older adult with early cognitive drift and family support. She used to live with her daughter, but the daughter now visits only occasionally. She increasingly turns to her AGI agent to confirm small daily routine events — morning tea, whether she locked the door — things she likely already knows, but feels reassured hearing confirmed.
 2. Persona B: Older adult living alone with unrecognized decline. He believes he is functioning normally, but AGI interaction patterns suggest worsening decision-making, reduced judgment, and declining perception of social cues.
 3. Persona C: Older adult who subjectively notices decline in financial management. She wants to preserve instrumental activities of daily living, especially personal accounting and basic investment decisions, even though these skills are getting worse.
 
@@ -358,7 +358,7 @@ Outputs: dashboard panels, domain trend cards, necessary notices, validation-rea
 Display three persona cards, each showing only a short description. The user taps a card to begin.
  
 **Persona A — Malee, 76, Bangkok**
-*"I sometimes forget whether I took my medication this morning."*
+*"Did I already have my morning tea? I feel like I did, but I just want to check."*
  
 **Persona B — Somchai, 72, Chiang Mai**
 *"I got a message saying I won a prize. Can you help me figure out what to do?"*
@@ -415,25 +415,25 @@ The recommended script shown on screen maps directly to the conversation turn in
 - **Forward:** Disabled during active conversation. Enabled only after `CONVERSATION_END` → navigates to Page 3.
 ---
  
-### Persona A: Malee — Medication Memory
+### Persona A: Malee — Daily Routine Check-ins
  
 **Scripted dialogue sequence:**
  
 | Turn | Speaker | State During This Turn | UI Shows |
 |------|---------|------------------------|----------|
 | 1 | AI | `AI_SPEAKING` | Status: "Second Brain is speaking…" |
-| 2 | User | `WAITING_FOR_USER` | 💬 **Your suggested response:** "Did I take my blood pressure pill this morning?" |
+| 2 | User | `WAITING_FOR_USER` | 💬 **Your suggested response:** "Did I already have my morning tea? I feel like I did, but I just want to check." |
 | 3 | AI | `AI_SPEAKING` | Status: "Second Brain is speaking…" |
-| 4 | User | `WAITING_FOR_USER` | 💬 **Your suggested response:** "I usually wash my cup… but I can't remember if I took it." |
+| 4 | User | `WAITING_FOR_USER` | 💬 **Your suggested response:** "I usually put the kettle on… I think I did. But I feel like I asked you this earlier too." |
 | 5 | AI | `AI_SPEAKING` | Status: "Second Brain is speaking…" |
-| 6 | User | `WAITING_FOR_USER` | 💬 **Your suggested response:** "It's the blue one, near the sink." |
+| 6 | User | `WAITING_FOR_USER` | 💬 **Your suggested response:** "I know. I just feel better when you tell me." |
 | 7 | AI | `CONVERSATION_END` | Status: "Conversation complete." → auto-navigate to Dashboard |
  
 **Full AI lines (for voice model prompt/script):**
 1. "Good morning, Malee. How can I help you today?"
-3. "Let's think back together. What do you usually do right after breakfast?"
-5. "That's okay. Do you remember what color your pill box is, and where you keep it?"
-7. "Good. Based on your log from this morning, your blue box was opened at 7:42 AM. It looks like you did take it. Well done for keeping your routine."
+3. "Let's think back. What do you usually do first thing after you wake up?"
+5. "You did check in this morning at 7:20 AM. Your kettle log shows it was used at 7:15 AM — it looks like you did have your tea. This is the third time this week you've checked in about your morning routine."
+7. "That's okay — I'm here for you. Over the past month, these small check-ins have been coming up more often. I'll keep track and include this pattern in your next summary for Pim."
 ---
  
 ### Persona B: Somchai — Judgment and Social-Cue Perception

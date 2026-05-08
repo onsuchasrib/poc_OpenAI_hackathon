@@ -13,9 +13,33 @@ export function PersonaSelector({ selectedId, onSelect }: Props) {
       </aside>
 
       <div className="section-heading minimal-heading">
-        <p className="eyebrow">Page 1 · Select Persona</p>
         <h1 id="persona-title">Select persona</h1>
+        <p className="demo-intro">This demo walks through three everyday Thai life situations where an AGI companion quietly supports cognitive health — kitchen routines, lottery fraud, and investment decisions.</p>
       </div>
+
+      <ol className="demo-steps" aria-label="Demo steps">
+        <li className="demo-step demo-step--active">
+          <span className="demo-step__num">1</span>
+          <div>
+            <strong>Select a situation</strong>
+            <p>Choose one of three Thai life scenarios: <em>morning kitchen routine</em>, <em>lottery scam judgment</em>, or <em>mutual fund decision</em>.</p>
+          </div>
+        </li>
+        <li className="demo-step">
+          <span className="demo-step__num">2</span>
+          <div>
+            <strong>Live AI conversation</strong>
+            <p>Hear Second Brain guide the person through their situation in real time — and follow along with a suggested response.</p>
+          </div>
+        </li>
+        <li className="demo-step">
+          <span className="demo-step__num">3</span>
+          <div>
+            <strong>Dashboard review</strong>
+            <p>See how the AI's cognitive support signals are captured and surfaced to a family caregiver.</p>
+          </div>
+        </li>
+      </ol>
 
       <div className="persona-grid narrative-personas">
         {personas.map((persona) => (
