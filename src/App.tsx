@@ -7,7 +7,7 @@ import { nextStage, previousStage, stageLabels, type DemoStage } from './lib/dem
 
 export default function App() {
   const [stage, setStage] = useState<DemoStage>('personas');
-  const [personaId, setPersonaId] = useState<PersonaId | null>(null);
+  const [personaId, setPersonaId] = useState<PersonaId | null>('somchai');
   const [conversationComplete, setConversationComplete] = useState(false);
   const [replayMode, setReplayMode] = useState(false);
   const autoDashboardTimerRef = useRef<number | null>(null);

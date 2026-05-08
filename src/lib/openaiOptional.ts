@@ -88,7 +88,14 @@ async function connectLiveVoice(
   script: ConversationStep[],
   callbacks: VoiceCallbacks,
 ): Promise<VoiceSessionHandle> {
-  const ephemeralKey = await resolveKey(config);
+  // Resolve the key and acquire microphone permission before opening the WebSocket.
+  // getUserMedia can block on a browser permission prompt on first use; if we wait
+  // until after the WebSocket connects the session.created / response.create cycle
+  // races ahead and the AI finishes its first turn before the mic is wired up.
+  const [ephemeralKey, stream] = await Promise.all([
+    resolveKey(config),
+    navigator.mediaDevices.getUserMedia({ audio: true, video: false }),
+  ]);
 
   const ws = new WebSocket(
     `wss://api.openai.com/v1/realtime?model=${encodeURIComponent(config.model)}`,
@@ -96,7 +103,6 @@ async function connectLiveVoice(
   );
 
   const audioCtx = new AudioContext({ sampleRate: 24000 });
-  let stream: MediaStream | null = null;
   // eslint-disable-next-line @typescript-eslint/no-deprecated
   let processor: ScriptProcessorNode | null = null;
   let nextPlayTime = 0;
@@ -197,8 +203,7 @@ async function connectLiveVoice(
     console.error('[SecondBrain] Realtime WebSocket error');
   };
 
-  // Capture microphone as PCM16 and stream to the WebSocket
-  stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+  // Wire the already-acquired microphone stream into the WebSocket pipeline
   const source = audioCtx.createMediaStreamSource(stream);
   // ScriptProcessorNode is deprecated but still broadly supported and avoids a separate AudioWorklet module
   // eslint-disable-next-line @typescript-eslint/no-deprecated
